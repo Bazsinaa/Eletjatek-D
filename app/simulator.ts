@@ -4,13 +4,36 @@ export default class Simulator{
     #oszlopokSzama: number;
     #sorokSzama: number;
 
+    get #szomszedokSzama(sorIndex: number, oszlopIndex: number){
+        const m: number[][] = this.#matrix;
+        let szomszedok: number = 0;
+        if (m[sorIndex - 1][oszlopIndex - 1] == 1) szomszedok += 1;
+        if (m[sorIndex - 1][oszlopIndex] == 1) szomszedok += 1;
+        if (m[sorIndex - 1][oszlopIndex + 1] == 1) szomszedok += 1;
+        if (m[sorIndex][oszlopIndex - 1] == 1) szomszedok += 1;
+        if (m[sorIndex][oszlopIndex + 1] == 1) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex - 1] == 1) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex] == 1) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex + 1] == 1) szomszedok += 1;
+        return szomszedok
+    }
+
     get #kovetkezoAllapot(): number[][]{
-        const m: number[][] = [];
-        return m
+        const m: number[][] = this.#matrix;
+        for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
+            for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+                if (m[sorIndex][oszlopIndex] == -1){
+                    continue;
+                }
+                if ()
+                
+            }
+            
+        }
     }
 
     get #megjelenit(): string{
-        let vissza: string = ""
+        let vissza: string = "";
         return vissza
     }
 
