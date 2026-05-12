@@ -18,8 +18,8 @@ export default class Simulator{
         for (let sorIndex = 0; sorIndex < sorokSzáma +2 ; sorIndex++) {
             const aktSor: number[] = [];
             for (let oszlopIndex = 0; oszlopIndex < oszlopokSzáma + 2; oszlopIndex++) {
-                if (sorIndex == 0 || oszlopIndex == 0){
-                    aktSor.push(0)
+                if (sorIndex == 0 || oszlopIndex == 0 || sorIndex == sorokSzáma + 2 || oszlopIndex == oszlopokSzáma + 2){
+                    aktSor.push(-1)
                 }
                 else
                 {
