@@ -4,7 +4,7 @@ export default class Simulator{
     #oszlopokSzama: number;
     #sorokSzama: number;
 
-    get #szomszedokSzama(sorIndex: number, oszlopIndex: number){
+    #szomszedokSzama(sorIndex: number, oszlopIndex: number): number{
         const m: number[][] = this.#matrix;
         let szomszedok: number = 0;
         if (m[sorIndex - 1][oszlopIndex - 1] == 1) szomszedok += 1;
@@ -22,19 +22,31 @@ export default class Simulator{
         const m: number[][] = this.#matrix;
         for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
             for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+                const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex) 
                 if (m[sorIndex][oszlopIndex] == -1){
                     continue;
                 }
-                if ()
+                if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)){
+                    m[sorIndex][oszlopIndex] = 0;
+                }
+                if (m[sorIndex][oszlopIndex] == 0 && (szomszédok == 3)){
+                    m[sorIndex][oszlopIndex] = 1;
+                }
                 
             }
-            
         }
+        this.#matrix = m;
+        return m;
     }
 
     get #megjelenit(): string{
         let vissza: string = "";
         return vissza
+    }
+
+    get run(){
+        this.#megjelenit;
+        
     }
 
     constructor(sorokSzáma: number, oszlopokSzáma: number) {
