@@ -32,11 +32,37 @@ export default class Simulator{
         }
     }
 
-    get #megjelenit(): string{
+    get #megjelenit(): string {
+
         let vissza: string = "";
-        return vissza
+
+        for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
+
+            for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+
+                const aktualis: number = this.#matrix[sorIndex][oszlopIndex];
+
+                if (aktualis == -1) {
+                    vissza += "X";
+                }
+                else if (aktualis == 0) {
+                    vissza += " ";
+                }
+                else if (aktualis == 1) {
+                    vissza += "S";
+                }
+            }
+
+            vissza += "\n";
+        }
+
+        return vissza;
     }
 
+    public toString(): string {
+        return this.#megjelenit;
+    }
+    
     constructor(sorokSzáma: number, oszlopokSzáma: number) {
         for (let sorIndex = 0; sorIndex < sorokSzáma +2 ; sorIndex++) {
             const aktSor: number[] = [];
