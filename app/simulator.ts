@@ -20,6 +20,7 @@ export default class Simulator{
 
     get #kovetkezoAllapot(): number[][]{
         const m: number[][] = this.#matrix;
+        const mFinal: number[][] = this.#matrix;
         for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
             for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
                 const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex) 
@@ -27,10 +28,10 @@ export default class Simulator{
                     continue;
                 }
                 if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)){
-                    m[sorIndex][oszlopIndex] = 0;
+                    mFinal[sorIndex][oszlopIndex] = 0;
                 }
                 if (m[sorIndex][oszlopIndex] == 0 && (szomszédok == 3)){
-                    m[sorIndex][oszlopIndex] = 1;
+                    mFinal[sorIndex][oszlopIndex] = 1;
                 }
                 
             }
