@@ -1,114 +1,118 @@
-export default class Simulator{
-    #matrix: number[][] = [];
+export default class Simulator {
+  #matrix: number[][] = [];
 
-    #oszlopokSzama: number;
-    #sorokSzama: number;
+  #oszlopokSzama: number;
+  #sorokSzama: number;
 
-    #jelenlegiJatekos: number = 1;
+  #jelenlegiJatekos: number = 1;
 
-    #szomszedokSzama(sorIndex: number, oszlopIndex: number): number{
+  #szomszedokSzama(sorIndex: number, oszlopIndex: number, jatekosSzam: number): number {
+
         const m: number[][] = this.#matrix;
         let szomszedok: number = 0;
-        if (m[sorIndex - 1][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex - 1][oszlopIndex] == 1) szomszedok += 1;
-        if (m[sorIndex - 1][oszlopIndex + 1] == 1) szomszedok += 1;
-        if (m[sorIndex][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex][oszlopIndex + 1] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex + 1] == 1) szomszedok += 1;
-        return szomszedok
-    }
 
-    get #kovetkezoAllapot(): number[][]{
-        const m: number[][] = this.#matrix;
-        const mFinal: number[][] = this.#matrix;
-        for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
-            for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-                const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex) 
-                if (m[sorIndex][oszlopIndex] == -1){
+        for (let i = -1; i <= 1; i++) {
+            for (let j = -1; j <= 1; j++) {
+
+                if (i == 0 && j == 0) {
                     continue;
                 }
-                if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)){
-                    mFinal[sorIndex][oszlopIndex] = 0;
-                }
-                if (m[sorIndex][oszlopIndex] == 0 && (szomszédok == 3)){
-                    mFinal[sorIndex][oszlopIndex] = 1;
-                }
-                
-            }
-        }
-        this.#matrix = m;
-        return m;
-    }
 
-    get #megjelenit(): string {
-
-        let vissza: string = "";
-
-        for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
-
-            for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-
-                const aktualis: number = this.#matrix[sorIndex][oszlopIndex];
-
-                if (aktualis == -1) {
-                    vissza += "X";
-                }
-                else if (aktualis == 0) {
-                    vissza += " ";
-                }
-                else if (aktualis == 1) {
-                    vissza += "S";
+                if (m[sorIndex + i][oszlopIndex + j] == jatekosSzam) {
+                    szomszedok++;
                 }
             }
-
-            vissza += "\n";
         }
 
-        return vissza;
+        return szomszedok;
     }
 
-    public toString(): string {
-        return this.#megjelenit;
-    }
 
-    get run(){
-        this.#megjelenit;
-        
-    }
 
-    lerak(sor: number, oszlop: number): void {
-        if(this.#matrix[sor][oszlop] == -1){
-            throw new Error("Nem lehet lerakni a pálya szélére!");
-            //TOAST POPUP - DÁVID DÁVID
+  get #kovetkezoAllapot(): number[][] {
+    const m: number[][] = this.#matrix;
+    const mFinal: number[][] = this.#matrix;
+    for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
+      for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+        const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex);
+        if (m[sorIndex][oszlopIndex] == -1) {
+          continue;
         }
-
-        if(this.#matrix[sor][oszlop] == 1 || this.#matrix[sor][oszlop] == 2)
-        {
-            throw new Error("Nem lehet lerakni egy már élő cellára!");
-            //TOAST POPUP - DÁVID DÁVID
+        if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)) {
+          mFinal[sorIndex][oszlopIndex] = 0;
         }
+        if (m[sorIndex][oszlopIndex] == 0 && szomszédok == 3) {
+          mFinal[sorIndex][oszlopIndex] = 1;
+        }
+      }
+    }
+    this.#matrix = m;
+    return m;
+  }
 
-        this.#matrix[sor][oszlop] = this.#jelenlegiJatekos;
-        this.#jelenlegiJatekos = this.#jelenlegiJatekos == 1 ? 2 : 1;
+  get #megjelenit(): string {
+    let vissza: string = "";
+
+    for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
+      for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+        const aktualis: number = this.#matrix[sorIndex][oszlopIndex];
+
+        if (aktualis == -1) {
+          vissza += "X";
+        } else if (aktualis == 0) {
+          vissza += " ";
+        } else if (aktualis == 1) {
+          vissza += "S";
+        }
+      }
+
+      vissza += "\n";
     }
 
-    constructor(sorokSzáma: number, oszlopokSzáma: number) {
-        for (let sorIndex = 0; sorIndex < sorokSzáma +2 ; sorIndex++) {
-            const aktSor: number[] = [];
-            for (let oszlopIndex = 0; oszlopIndex < oszlopokSzáma + 2; oszlopIndex++) {
-                if (sorIndex == 0 || oszlopIndex == 0 || sorIndex == sorokSzáma + 2 || oszlopIndex == oszlopokSzáma + 2){
-                    aktSor.push(-1)
-                }
-                else
-                {
-                    aktSor.push(0);
-                }
-            }
-            this.#matrix.push(aktSor);
-        }
-        this.#sorokSzama = sorokSzáma;
-        this.#oszlopokSzama = oszlopokSzáma;
+    return vissza;
+  }
+
+  public toString(): string {
+    return this.#megjelenit;
+  }
+
+  get run() {
+    this.#megjelenit;
+  }
+
+  lerak(sor: number, oszlop: number): void {
+    if (this.#matrix[sor][oszlop] == -1) {
+      throw new Error("Nem lehet lerakni a pálya szélére!");
+      //TOAST POPUP - DÁVID DÁVID
     }
+
+    if (this.#matrix[sor][oszlop] == 1 || this.#matrix[sor][oszlop] == 2) {
+      throw new Error("Nem lehet lerakni egy már élő cellára!");
+      //TOAST POPUP - DÁVID DÁVID
+    }
+
+    this.#matrix[sor][oszlop] = this.#jelenlegiJatekos;
+    this.#jelenlegiJatekos = this.#jelenlegiJatekos == 1 ? 2 : 1;
+  }
+
+  constructor(sorokSzáma: number, oszlopokSzáma: number) {
+    for (let sorIndex = 0; sorIndex < sorokSzáma + 2; sorIndex++) {
+      const aktSor: number[] = [];
+      for (let oszlopIndex = 0; oszlopIndex < oszlopokSzáma + 2; oszlopIndex++) {
+        if (
+          sorIndex == 0 ||
+          oszlopIndex == 0 ||
+          sorIndex == sorokSzáma + 2 ||
+          oszlopIndex == oszlopokSzáma + 2
+        ) {
+          aktSor.push(-1);
+        } else {
+          aktSor.push(0);
+        }
+      }
+      this.#matrix.push(aktSor);
+    }
+    this.#sorokSzama = sorokSzáma;
+    this.#oszlopokSzama = oszlopokSzáma;
+  }
 }
