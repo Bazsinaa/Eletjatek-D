@@ -4,6 +4,8 @@ export default class Simulator{
     #oszlopokSzama: number;
     #sorokSzama: number;
 
+    #jelenlegiJatekos: number = 1;
+
     #szomszedokSzama(sorIndex: number, oszlopIndex: number): number{
         const m: number[][] = this.#matrix;
         let szomszedok: number = 0;
@@ -76,6 +78,22 @@ export default class Simulator{
         
     }
 
+    lerak(sor: number, oszlop: number): void {
+        if(this.#matrix[sor][oszlop] == -1){
+            throw new Error("Nem lehet lerakni a pálya szélére!");
+            //TOAST POPUP - DÁVID DÁVID
+        }
+
+        if(this.#matrix[sor][oszlop] == 1 || this.#matrix[sor][oszlop] == 2)
+        {
+            throw new Error("Nem lehet lerakni egy már élő cellára!");
+            //TOAST POPUP - DÁVID DÁVID
+        }
+
+        this.#matrix[sor][oszlop] = this.#jelenlegiJatekos;
+        this.#jelenlegiJatekos = this.#jelenlegiJatekos == 1 ? 2 : 1;
+    }
+
     constructor(sorokSzáma: number, oszlopokSzáma: number) {
         for (let sorIndex = 0; sorIndex < sorokSzáma +2 ; sorIndex++) {
             const aktSor: number[] = [];
@@ -85,10 +103,12 @@ export default class Simulator{
                 }
                 else
                 {
-                    aktSor.push(Math.floor(Math.random() * 2));
+                    aktSor.push(0);
                 }
             }
             this.#matrix.push(aktSor);
         }
+        this.#sorokSzama = sorokSzáma;
+        this.#oszlopokSzama = oszlopokSzáma;
     }
 }
