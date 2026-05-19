@@ -29,26 +29,33 @@ export default class Simulator {
 
 
 
-  get #kovetkezoAllapot(): number[][] {
-    const m: number[][] = this.#matrix;
-    const mFinal: number[][] = this.#matrix;
-    for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
-      for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-        const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex);
-        if (m[sorIndex][oszlopIndex] == -1) {
-          continue;
+  get #kovetkezoAllapot(): number[][]{
+        const m: number[][] = this.#matrix;
+        const mFinal: number[][] = this.#matrix;
+        for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
+            for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
+                const szomszédok1: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 1);
+                const szomszédok2: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 2);
+                const szomszédokOssz: number = szomszédok1 + szomszédok2;
+                if (m[sorIndex][oszlopIndex] == -1){
+                    continue;
+                }
+                if ((m[sorIndex][oszlopIndex] == 1 || m[sorIndex][oszlopIndex] == 2) && (szomszédokOssz < 2 || szomszédokOssz > 3)){
+                    mFinal[sorIndex][oszlopIndex] = 0;
+                }
+                if (m[sorIndex][oszlopIndex] == 0 && (szomszédokOssz == 3)){
+                    if  (szomszédok1 > szomszédok2){
+                        mFinal[sorIndex][oszlopIndex] = 1;
+                    } else{
+                        mFinal[sorIndex][oszlopIndex] = 2;
+                    }
+                }
+                
+            }
         }
-        if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)) {
-          mFinal[sorIndex][oszlopIndex] = 0;
-        }
-        if (m[sorIndex][oszlopIndex] == 0 && szomszédok == 3) {
-          mFinal[sorIndex][oszlopIndex] = 1;
-        }
-      }
+        this.#matrix = m;
+        return m;
     }
-    this.#matrix = m;
-    return m;
-  }
 
   get #megjelenit(): string {
     let vissza: string = "";
