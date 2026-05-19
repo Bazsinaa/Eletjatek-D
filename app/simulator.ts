@@ -51,8 +51,8 @@ export default class Simulator {
         }
       }
     }
-    this.#matrix = m;
-    return m;
+    this.#matrix = mFinal;
+    return mFinal;
   }
 
   get #megjelenit(): string {
@@ -88,9 +88,11 @@ export default class Simulator {
     return this.#megjelenit;
   }
 
-  get run() {
-    this.#megjelenit;
-    this.#matrix = this.#kovetkezoAllapot;
+  run() {
+    setInterval(() => {
+            this.#kovetkezoAllapot;
+            this.#megjelenit;
+        }, 1000);
   }
 
   lerak(sor: number, oszlop: number): void {
@@ -106,6 +108,18 @@ export default class Simulator {
 
     this.#matrix[sor][oszlop] = this.#jelenlegiJatekos;
     this.#jelenlegiJatekos = this.#jelenlegiJatekos == 1 ? 2 : 1;
+  }
+
+  get jelenlegiJatekos(): number{
+    return this.#jelenlegiJatekos;
+  }
+
+  get sorokSzama(): number{
+    return this.#sorokSzama;
+  }
+
+  get oszlopokSzama(): number{
+    return this.#oszlopokSzama;
   }
 
   constructor(sorokSzáma: number, oszlopokSzáma: number) {
@@ -129,3 +143,5 @@ export default class Simulator {
     this.#oszlopokSzama = oszlopokSzáma;
   }
 }
+
+//Dávid Dávid: megjeleníted üresen, utána kezdődik a lerakós fáris, ahol a játékosok lepakolják (lerak függvény - itt vannak kivételek, szóval try - catch blokkot használj kérlek) a sejteket. Eztán indul a szimuláció (run függvény) :3
