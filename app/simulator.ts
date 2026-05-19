@@ -6,17 +6,17 @@ export default class Simulator{
 
     #jelenlegiJatekos: number = 1;
 
-    #szomszedokSzama(sorIndex: number, oszlopIndex: number): number{
+    #szomszedokSzama(sorIndex: number, oszlopIndex: number, jatekosSzam: number): number{
         const m: number[][] = this.#matrix;
         let szomszedok: number = 0;
-        if (m[sorIndex - 1][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex - 1][oszlopIndex] == 1) szomszedok += 1;
-        if (m[sorIndex - 1][oszlopIndex + 1] == 1) szomszedok += 1;
-        if (m[sorIndex][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex][oszlopIndex + 1] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex - 1] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex] == 1) szomszedok += 1;
-        if (m[sorIndex + 1][oszlopIndex + 1] == 1) szomszedok += 1;
+        if (m[sorIndex - 1][oszlopIndex - 1] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex - 1][oszlopIndex] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex - 1][oszlopIndex + 1] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex][oszlopIndex - 1] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex][oszlopIndex + 1] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex - 1] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex] == jatekosSzam) szomszedok += 1;
+        if (m[sorIndex + 1][oszlopIndex + 1] == jatekosSzam) szomszedok += 1;
         return szomszedok
     }
 
@@ -25,15 +25,21 @@ export default class Simulator{
         const mFinal: number[][] = this.#matrix;
         for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
             for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-                const szomszédok: number = this.#szomszedokSzama(sorIndex, oszlopIndex) 
+                const szomszédok1: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 1);
+                const szomszédok2: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 2);
+                const szomszédokOssz: number = szomszédok1 + szomszédok2;
                 if (m[sorIndex][oszlopIndex] == -1){
                     continue;
                 }
-                if (m[sorIndex][oszlopIndex] == 1 && (szomszédok < 2 || szomszédok > 3)){
+                if ((m[sorIndex][oszlopIndex] == 1 || m[sorIndex][oszlopIndex] == 2) && (szomszédokOssz < 2 || szomszédokOssz > 3)){
                     mFinal[sorIndex][oszlopIndex] = 0;
                 }
-                if (m[sorIndex][oszlopIndex] == 0 && (szomszédok == 3)){
-                    mFinal[sorIndex][oszlopIndex] = 1;
+                if (m[sorIndex][oszlopIndex] == 0 && (szomszédokOssz == 3)){
+                    if  (szomszédok1 > szomszédok2){
+                        mFinal[sorIndex][oszlopIndex] = 1;
+                    } else{
+                        mFinal[sorIndex][oszlopIndex] = 2;
+                    }
                 }
                 
             }
@@ -75,6 +81,7 @@ export default class Simulator{
 
     get run(){
         this.#megjelenit;
+        this.#matrix = this.#kovetkezoAllapot
         
     }
 
