@@ -170,6 +170,16 @@ export default class Simulator {
         : 1;
   }
 
+  reset() {
+  for (let r = 1; r <= this.#sorokSzama; r++) {
+    for (let c = 1; c <= this.#oszlopokSzama; c++) {
+      this.#matrix[r][c] = 0;
+    }
+  }
+
+  this.#jelenlegiJatekos = 1;
+}
+
   constructor(
     sorokSzama: number,
     oszlopokSzama: number
