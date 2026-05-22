@@ -6,8 +6,19 @@ export default class Simulator {
 
   #jelenlegiJatekos: number = 1;
 
-  #szomszedokSzama(sorIndex: number, oszlopIndex: number, jatekosSzam: number): number {
-    const m: number[][] = this.#matrix;
+  get matrix(): number[][] {
+    return this.#matrix;
+  }
+
+  get jelenlegiJatekos(): number {
+    return this.#jelenlegiJatekos;
+  }
+
+  #szomszedokSzama(
+    sorIndex: number,
+    oszlopIndex: number,
+    jatekosSzam: number
+  ): number {
     let szomszedok: number = 0;
 
     for (let i = -1; i <= 1; i++) {
@@ -16,7 +27,10 @@ export default class Simulator {
           continue;
         }
 
-        if (m[sorIndex + i][oszlopIndex + j] == jatekosSzam) {
+        if (
+          this.#matrix[sorIndex + i][oszlopIndex + j] ==
+          jatekosSzam
+        ) {
           szomszedok++;
         }
       }
@@ -26,48 +40,89 @@ export default class Simulator {
   }
 
   get #kovetkezoAllapot(): number[][] {
-    const m: number[][] = this.#matrix;
-    const mFinal: number[][] = this.#matrix;
-    for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
-      for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-        const szomszédok1: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 1);
-        const szomszédok2: number = this.#szomszedokSzama(sorIndex, oszlopIndex, 2);
-        const szomszédokOssz: number = szomszédok1 + szomszédok2;
-        if (m[sorIndex][oszlopIndex] == -1) {
-          continue;
-        }
+    const ujMatrix: number[][] =
+      this.#matrix.map((sor) => [...sor]);
+
+    for (
+      let sorIndex = 1;
+      sorIndex <= this.#sorokSzama;
+      sorIndex++
+    ) {
+      for (
+        let oszlopIndex = 1;
+        oszlopIndex <= this.#oszlopokSzama;
+        oszlopIndex++
+      ) {
+        const aktualis =
+          this.#matrix[sorIndex][oszlopIndex];
+
+        const szomszedok1 =
+          this.#szomszedokSzama(
+            sorIndex,
+            oszlopIndex,
+            1
+          );
+
+        const szomszedok2 =
+          this.#szomszedokSzama(
+            sorIndex,
+            oszlopIndex,
+            2
+          );
+
+        const osszes =
+          szomszedok1 + szomszedok2;
+
+        // halál
         if (
-          (m[sorIndex][oszlopIndex] == 1 || m[sorIndex][oszlopIndex] == 2) &&
-          (szomszédokOssz < 2 || szomszédokOssz > 3)
+          (aktualis == 1 || aktualis == 2) &&
+          (osszes < 2 || osszes > 3)
         ) {
-          mFinal[sorIndex][oszlopIndex] = 0;
+          ujMatrix[sorIndex][oszlopIndex] = 0;
         }
-        if (m[sorIndex][oszlopIndex] == 0 && szomszédokOssz == 3) {
-          if (szomszédok1 > szomszédok2) {
-            mFinal[sorIndex][oszlopIndex] = 1;
-          } else {
-            mFinal[sorIndex][oszlopIndex] = 2;
-          }
+
+        // túlélés
+        else if (
+          (aktualis == 1 || aktualis == 2) &&
+          (osszes == 2 || osszes == 3)
+        ) {
+          ujMatrix[sorIndex][oszlopIndex] =
+            aktualis;
+        }
+
+        // születés
+        else if (
+          aktualis == 0 &&
+          osszes == 3
+        ) {
+          ujMatrix[sorIndex][oszlopIndex] =
+            szomszedok1 > szomszedok2
+              ? 1
+              : 2;
         }
       }
     }
-    this.#matrix = m;
-    return m;
+
+    return ujMatrix;
   }
 
-  get #megjelenit(): string {
+  public toString(): string {
     let vissza: string = "";
 
-    for (let sorIndex = 0; sorIndex < this.#matrix.length; sorIndex++) {
-      for (let oszlopIndex = 0; oszlopIndex < this.#matrix[0].length; oszlopIndex++) {
-        const aktualis: number = this.#matrix[sorIndex][oszlopIndex];
+    for (
+      let sorIndex = 0;
+      sorIndex < this.#matrix.length;
+      sorIndex++
+    ) {
+      for (
+        let oszlopIndex = 0;
+        oszlopIndex < this.#matrix[0].length;
+        oszlopIndex++
+      ) {
+        const aktualis =
+          this.#matrix[sorIndex][oszlopIndex];
 
-        if (
-          sorIndex == 0 ||
-          oszlopIndex == 0 ||
-          sorIndex == this.#matrix.length - 1 ||
-          oszlopIndex == this.#matrix[0].length - 1
-        ) {
+        if (aktualis == -1) {
           vissza += "X";
         } else if (aktualis == 0) {
           vissza += " ";
@@ -84,48 +139,69 @@ export default class Simulator {
     return vissza;
   }
 
-  public toString(): string {
-    return this.#megjelenit;
-  }
-
-  get run() {
-    this.#megjelenit;
+  run(): void {
     this.#matrix = this.#kovetkezoAllapot;
   }
 
   lerak(sor: number, oszlop: number): void {
-    if (this.#matrix[sor][oszlop] == -1) {
-      throw new Error("Nem lehet lerakni a pálya szélére!");
-      //TOAST POPUP - DÁVID DÁVID
+    if (
+      this.#matrix[sor][oszlop] == -1
+    ) {
+      throw new Error(
+        "Nem lehet a pálya szélére rakni!"
+      );
     }
 
-    if (this.#matrix[sor][oszlop] == 1 || this.#matrix[sor][oszlop] == 2) {
-      throw new Error("Nem lehet lerakni egy már élő cellára!");
-      //TOAST POPUP - DÁVID DÁVID
+    if (
+      this.#matrix[sor][oszlop] == 1 ||
+      this.#matrix[sor][oszlop] == 2
+    ) {
+      throw new Error(
+        "Ide már raktak sejtet!"
+      );
     }
 
-    this.#matrix[sor][oszlop] = this.#jelenlegiJatekos;
-    this.#jelenlegiJatekos = this.#jelenlegiJatekos == 1 ? 2 : 1;
+    this.#matrix[sor][oszlop] =
+      this.#jelenlegiJatekos;
+
+    this.#jelenlegiJatekos =
+      this.#jelenlegiJatekos == 1
+        ? 2
+        : 1;
   }
 
-  constructor(sorokSzáma: number, oszlopokSzáma: number) {
-    for (let sorIndex = 0; sorIndex < sorokSzáma + 2; sorIndex++) {
+  constructor(
+    sorokSzama: number,
+    oszlopokSzama: number
+  ) {
+    this.#sorokSzama = sorokSzama;
+    this.#oszlopokSzama = oszlopokSzama;
+
+    for (
+      let sorIndex = 0;
+      sorIndex < sorokSzama + 2;
+      sorIndex++
+    ) {
       const aktSor: number[] = [];
-      for (let oszlopIndex = 0; oszlopIndex < oszlopokSzáma + 2; oszlopIndex++) {
+
+      for (
+        let oszlopIndex = 0;
+        oszlopIndex < oszlopokSzama + 2;
+        oszlopIndex++
+      ) {
         if (
           sorIndex == 0 ||
           oszlopIndex == 0 ||
-          sorIndex == sorokSzáma + 2 ||
-          oszlopIndex == oszlopokSzáma + 2
+          sorIndex == sorokSzama + 1 ||
+          oszlopIndex == oszlopokSzama + 1
         ) {
           aktSor.push(-1);
         } else {
           aktSor.push(0);
         }
       }
+
       this.#matrix.push(aktSor);
     }
-    this.#sorokSzama = sorokSzáma;
-    this.#oszlopokSzama = oszlopokSzáma;
   }
 }
